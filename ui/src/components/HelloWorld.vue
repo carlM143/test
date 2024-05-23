@@ -5,6 +5,7 @@
         <b-col>
           <h1>User CRUD</h1>
           <AddTask />
+          <b-button variant="success" class="float-end"  @click="logout">Logout</b-button>
           <br>
           <b-table :items="tasksWithStatus" :fields="fields">
             <template #cell(actions)="data">
@@ -45,6 +46,7 @@
 import { mapState, mapActions } from 'vuex';
 import Swal from 'sweetalert2';
 import AddTask from '@/components/AddTask.vue';
+import AuthService from '../../AuthService';
 
 export default {
   name: 'HelloWorld',
@@ -86,7 +88,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['getTasks', 'updateTask', 'deleteTask']),
+    ...mapActions(['getTasks', 'updateTask', 'deleteTask', 'logout']),
 
     openEditModal(item) {
       this.editedItem = { ...item };
@@ -113,6 +115,30 @@ export default {
             confirmButtonText: 'OK'
           });
         });
+    },
+
+    async logout() {
+      try {
+        await this.$store.dispatch('logout');
+        AuthService.removeToken();
+        AuthService.removeUser();
+        Swal.fire({
+          title: 'Logged Out',
+          text: 'You have been successfully logged out.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          this.$router.push('/login');
+        });
+      } catch (error) {
+        console.error('Error logging out:', error);
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to logout',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
     },
 
     confirmDeleteTask(id) {
