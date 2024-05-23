@@ -1,16 +1,14 @@
 <template>
   <div class="container mt-5 position-relative">
     <!-- Button to trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#taskModal">
-      Add Task
-    </button>
+
 
     <!-- Modal -->
     <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="taskModalLabel">Add Task</h5>
+            <h5 class="modal-title" :disabled="!isAdmin" id="taskModalLabel">Add Task</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -44,7 +42,7 @@
 import Swal from 'sweetalert2';
 import { mapActions } from 'vuex';
 import { Modal } from 'bootstrap';
-
+import AuthService from '../../AuthService';
 export default {
   data() {
     return {
@@ -61,6 +59,15 @@ export default {
       ]
     };
   },
+
+  computed: {
+
+    isAdmin() {
+      const user = AuthService.getUser();
+      return user && user.roles === 'admin';
+    }
+  },
+
   methods: {
     ...mapActions(['createTask', 'getTasks']),
     submitForm() {

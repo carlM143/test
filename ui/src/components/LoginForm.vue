@@ -25,7 +25,7 @@
   
   <script>
   import AuthService from '../../AuthService';
-  
+  import Swal from 'sweetalert2';
   export default {
     data() {
       return {
@@ -35,8 +35,6 @@
     },
     methods: {
         async login() {
-
-
       try {
         const { access_token, user } = await AuthService.login({
           email: this.email,
@@ -46,8 +44,20 @@
         AuthService.setUser(user);
         this.$router.push('/');
      
+        Swal.fire({
+          title: 'Success!',
+          text: 'Login successfully',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
+
       } catch (error) {
-        console.error(error);
+        Swal.fire({
+          title: 'Error!',
+          text: error.response?.data?.message || 'Failed to login',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
       } finally {
         // empty state
       }

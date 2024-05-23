@@ -5,12 +5,15 @@
         <b-col>
           <h1>User CRUD</h1>
           <AddTask />
+          <button type="button" class="btn btn-primary" :disabled="!isAdmin" data-bs-toggle="modal" data-bs-target="#taskModal">
+      Add Task
+    </button>
           <b-button variant="success" class="float-end"  @click="logout">Logout</b-button>
           <br>
           <b-table :items="tasksWithStatus" :fields="fields">
             <template #cell(actions)="data">
-              <b-button variant="danger" class="me-2" @click="confirmDeleteTask(data.item.id)">Delete</b-button>
-              <b-button variant="primary" @click="openEditModal(data.item)">Edit</b-button>
+              <b-button variant="danger" class="me-2" :disabled="!isAdmin" @click="confirmDeleteTask(data.item.id)">Delete</b-button>
+              <b-button variant="primary" :disabled="!isAdmin" @click="openEditModal(data.item)">Edit</b-button>
             </template>
           </b-table>
         </b-col>
@@ -84,6 +87,10 @@ export default {
         ...task,
         status: this.mapStatus(task.status)
       }));
+    },
+    isAdmin() {
+      const user = AuthService.getUser();
+      return user && user.roles === 'admin';
     }
   },
 
