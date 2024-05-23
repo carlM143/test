@@ -24,6 +24,8 @@
   </template>
   
   <script>
+  import AuthService from '../../AuthService';
+  
   export default {
     data() {
       return {
@@ -32,30 +34,25 @@
       };
     },
     methods: {
-      login() {
-        // Perform login action here
-        console.log('Logging in...');
-        console.log('Email:', this.email);
-        console.log('Password:', this.password);
-        // You can send login request to your backend API here
-        // Example using Axios:
-        /*
-        axios.post('/login', {
+        async login() {
+
+
+      try {
+        const { access_token, user } = await AuthService.login({
           email: this.email,
-          password: this.password
-        })
-        .then(response => {
-          console.log('Login successful:', response.data);
-          // Redirect to dashboard or home page
-          // Example: this.$router.push('/dashboard');
-        })
-        .catch(error => {
-          console.error('Login failed:', error.response.data);
-          // Handle login failure (show error message, etc.)
+          password: this.password,
         });
-        */
+        AuthService.setToken(access_token);
+        AuthService.setUser(user);
+        this.$router.push('/');
+     
+      } catch (error) {
+        console.error(error);
+      } finally {
+        // empty state
       }
-    }
+    },
+},
   };
   </script>
   
